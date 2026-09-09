@@ -3,22 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Country Flag Race Live</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Country Flag Race</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 10px;
+            background: #090d16;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+            overflow: hidden;
+            color: #ffffff;
+        }
+
+        /* হেডার বা টাইমার সেকশন */
+        .header {
+            text-align: center;
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 10px;
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+
+        .header h3 {
+            margin: 0;
+            font-size: 14px;
+            color: #94a3b8;
+            letter-spacing: 1px;
+        }
+
+        .header h1 {
+            margin: 5px 0 0 0;
+            font-size: 24px;
+            color: #38bdf8;
+            font-family: monospace;
+        }
+
+        /* ফ্ল্যাগের গ্রিড লেআউট - পুরো ডিসপ্লে কভার করবে */
+        .flag-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* প্রতি লাইনে ৪টি করে */
+            gap: 8px;
+            flex-grow: 1;
+            width: 100%;
+            overflow-y: auto;
+        }
+
+        /* প্রতিটি ফ্ল্যাগের কার্ড */
+        .flag-card {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* ফ্ল্যাগের ছবি বড় করা */
+        .flag-card img {
+            width: 65px;
+            height: 42px;
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* দেশের নাম টোটালি লুকিয়ে রাখা */
+        .flag-name {
+            display: none !important;
+        }
+
+        /* শুধু পয়েন্ট দেখানোর স্টাইল */
+        .flag-score {
+            font-size: 14px;
+            font-weight: bold;
+            color: #4ade80;
+            margin-top: 4px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1px 6px;
+            border-radius: 4px;
+        }
+
+        /* পয়েন্ট বাড়লে অ্যানিমেশন */
+        .highlight {
+            border-color: #4ade80 !important;
+            transform: scale(1.05);
+            background: #064e3b !important;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <!-- ওপরে স্ক্রিনশটের মতো টাইমার ও গোল সেকশন -->
-        <div class="header-box">
-            <div class="timer-title">TIME LEFT</div>
-            <div id="timer">02:00:00</div>
-            <div id="goal-info">Subscribe: +100 | Share: +1000</div>
-        </div>
 
-        <!-- ১১৭টি দেশের লিডারবোর্ড গ্রিড -->
-        <div id="flag-grid" class="flag-grid"></div>
+    <div class="header">
+        <h3>TIME LEFT</h3>
+        <h1 id="timer">01:55:33</h1>
     </div>
 
-    <script src="script.js"></script>
+    <!-- ১১৭+ ফ্ল্যাগের গ্রিড কন্টেইনার -->
+    <div class="flag-grid" id="flagGrid">
+        <!-- জাভাস্ক্রিপ্ট দিয়ে ডাইনামিক্যালি সব ফ্ল্যাগ এখানে লোড হবে -->
+    </div>
+
+    <script>
+        // দেশের কোড এবং ফ্ল্যাগের ডেটা (প্রয়োজনমতো কোড বাড়িয়ে নিতে পারেন)
+        const countries = [
+            { code: "BD", name: "Bangladesh", flag: "https://flagcdn.com/w320/bd.png", score: 0 },
+            { code: "IN", name: "India", flag: "https://flagcdn.com/w320/in.png", score: 0 },
+            { code: "PK", name: "Pakistan", flag: "https://flagcdn.com/w320/pk.png", score: 0 },
+            { code: "US", name: "United States", flag: "https://flagcdn.com/w320/us.png", score: 0 },
+            { code: "GB", name: "United Kingdom", flag: "https://flagcdn.com/w320/gb.png", score: 0 },
+            { code: "CA", name: "Canada", flag: "https://flagcdn.com/w320/ca.png", score: 0 },
+            { code: "SA", name: "Saudi Arabia", flag: "https://flagcdn.com/w320/sa.png", score: 0 },
+            { code: "AE", name: "UAE", flag: "https://flagcdn.com/w320/ae.png", score: 0 },
+            { code: "AU", name: "Australia", flag: "https://flagcdn.com/w320/au.png", score: 0 },
+            { code: "DE", name: "Germany", flag: "https://flagcdn.com/w320/de.png", score: 0 },
+            { code: "FR", name: "France", flag: "https://flagcdn.com/w320/fr.png", score: 0 },
+            { code: "BR", name: "Brazil", flag: "https://flagcdn.com/w320/br.png", score: 0 }
+            // এভাবে আপনার বাকি দেশগুলোর এন্ট্রি এখানে রাখতে পারেন
+        ];
+
+        const grid = document.getElementById("flagGrid");
+
+        // গ্রিড রেন্ডার করার ফাংশন
+        function renderGrid() {
+            grid.innerHTML = "";
+            countries.forEach((c, index) => {
+                const card = document.createElement("div");
+                card.className = "flag-card";
+                card.id = `card-${c.code}`;
+                card.innerHTML = `
+                    <img src="${c.flag}" alt="${c.code}">
+                    <span class="flag-name">${c.name}</span>
+                    <span class="flag-score" id="score-${c.code}">${c.score}</span>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        renderGrid();
+
+        // Streamer.bot WebSocket কানেকশন (লোকাল পোর্ট 8080)
+        function connectWebSocket() {
+            const ws = new WebSocket("ws://localhost:8080/");
+
+            ws.onopen = () => {
+                console.log("Connected to Streamer.bot WebSocket!");
+            };
+
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    // ধরুন Streamer.bot থেকে মেসেজে দেশের কোড এসেছে
+                    if (data.country) {
+                        updateScore(data.country);
+                    }
+                } catch (e) {
+                    console.log("Error parsing message", e);
+                }
+            };
+
+            ws.onclose = () => {
+                console.log("WebSocket disconnected. Reconnecting in 3s...");
+                setTimeout(connectWebSocket, 3000);
+            };
+        }
+
+        // পয়েন্ট আপডেট এবং অ্যানিমেশন ফাংশন
+        function updateScore(countryCode) {
+            const target = countries.find(c => c.code.toUpperCase() === countryCode.toUpperCase());
+            if (target) {
+                target.score += 1;
+                const scoreElem = document.getElementById(`score-${target.code}`);
+                const cardElem = document.getElementById(`card-${target.code}`);
+                
+                if (scoreElem && cardElem) {
+                    scoreElem.innerText = target.score;
+                    cardElem.classList.add("highlight");
+                    setTimeout(() => {
+                        cardElem.classList.remove("highlight");
+                    }, 500);
+                }
+            }
+        }
+
+        // অটো কানেক্ট কল
+        connectWebSocket();
+    </script>
 </body>
 </html>
