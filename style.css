@@ -1,7 +1,7 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: transparent; /* OBS বা ব্রাউজারের স্বচ্ছ ব্যাকগ্রাউন্ডের জন্য */
+    background-color: transparent;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: white;
     overflow: hidden;
@@ -13,70 +13,80 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 30px;
+    padding: 25px;
     box-sizing: border-box;
 }
 
 .header-box {
     text-align: center;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 15px;
-    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.85);
+    padding: 12px;
+    border-radius: 15px;
     width: 100%;
-    border: 2px solid #ff4757;
-    margin-bottom: 25px;
+    border: 3px solid #fbc531;
+    margin-bottom: 20px;
+    box-shadow: 0 0 20px rgba(251, 197, 49, 0.4);
 }
 
-.header-box h2 {
-    margin: 0 0 10px 0;
-    font-size: 38px;
+.timer-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #e84118;
+    letter-spacing: 2px;
+}
+
+#timer {
+    font-size: 50px;
+    font-weight: 900;
+    color: #fbc531;
+    margin: 5px 0;
 }
 
 #goal-info {
-    font-size: 22px;
-    color: #fffa65;
+    font-size: 20px;
+    color: #4cd137;
     font-weight: bold;
 }
 
-/* ১৩ কলাম এবং ৯ রো বিশিষ্ট ফ্ল্যাগ গ্রিড লেআউট */
+/* ১৩ কলাম এবং ৯ রো বিশিষ্ট ফ্ল্যাগ গ্রিড */
 .flag-grid {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(13, 1fr);
-    gap: 8px;
+    gap: 7px;
     align-content: start;
 }
 
 .flag-card {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    padding: 6px 4px;
+    border-radius: 6px;
+    padding: 5px 2px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: all 0.4s ease; /* পজিশন পরিবর্তনের সময় স্মুথ অ্যানিমেশন */
 }
 
 .flag-icon {
-    font-size: 30px;
-    margin-bottom: 4px;
+    font-size: 28px;
+    margin-bottom: 2px;
 }
 
 .country-code {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: bold;
     text-transform: uppercase;
+    color: #f5f6fa;
     margin-bottom: 2px;
-    color: #ffffff;
 }
 
 .score {
-    background: #ff4757;
-    padding: 2px 6px;
-    border-radius: 6px;
-    font-size: 12px;
+    background: #e84118;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 11px;
     font-weight: bold;
 }
