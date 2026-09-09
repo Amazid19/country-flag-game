@@ -1,7 +1,7 @@
-// Streamer.bot WebSocket কানেকশন (সাধারণত পোর্ট ৮০৮০ থাকে)
+// Streamer.bot WebSocket কানেকশন
 const ws = new WebSocket('ws://127.0.0.1:8080/');
 
-// ১১৭টি দেশের পূর্ণাঙ্গ ডাটা অ্যারে (১৩ কলাম × ৯ রো)
+// ১১৭টি দেশের পূর্ণাঙ্গ ডাটা অ্যারে
 let countries = [
     { name: "Afghanistan", code: "AF", flag: "🇦🇫", score: 0 },
     { name: "Albania", code: "AL", flag: "🇦🇱", score: 0 },
@@ -123,19 +123,21 @@ let countries = [
     { name: "Vietnam", code: "VN", flag: "🇻🇳", score: 0 }
 ];
 
-// গ্রিড রেন্ডার করার ফাংশন
+// গ্রিড রেন্ডার ও সর্টিং ফাংশন (যার পয়েন্ট বেশি সে উপরে যাবে)
 function renderGrid() {
     const grid = document.getElementById('flag-grid');
     grid.innerHTML = '';
 
+    // স্কোর অনুযায়ী বড় থেকে ছোট ক্রমানুসারে সাজানো (Sorting)
+    countries.sort((a, b) => b.score - a.score);
+
     countries.forEach(c => {
         const card = document.createElement('div');
         card.className = 'flag-card';
-        card.id = `country-${c.code}`;
         card.innerHTML = `
             <span class="flag-icon">${c.flag}</span>
             <span class="country-code">${c.code}</span>
-            <span class="score" id="score-${c.code}">${c.score}</span>
+            <span class="score">${c.score}</span>
         `;
         grid.appendChild(card);
     });
@@ -150,15 +152,30 @@ ws.onmessage = function(event) {
         
         if (target) {
             target.score += parseInt(data.pointsEarned);
-            
-            // ফুল পেজ রি-রেন্ডার না করে শুধু নির্দিষ্ট স্কোরের এলিমেন্ট আপডেট করা (স্মুথ পারফরম্যান্সের জন্য)
-            const scoreElement = document.getElementById(`score-${target.code}`);
-            if (scoreElement) {
-                scoreElement.innerText = target.score;
-            }
+            renderGrid(); // পয়েন্ট বাড়ার পর লিডারবোর্ড রি-সর্ট ও আপডেট হবে
         }
     }
 };
 
-// পেজ লোড হওয়ার সাথে সাথে গ্রিড তৈরি করা
+// কাউন্টডাউন টাইমার লজিক (যেমন ২ ঘণ্টা বা ৩ ঘণ্টার টাইমার)
+let totalSeconds = 2 * 3600; 
+function updateTimer() {
+    const timerElement = document.getElementById('timer');
+    let hours = Math.floor(totalSeconds / 3600);
+    let minutes = Math.floor((totalSeconds % 3600) / 60);
+    let seconds = totalSeconds % 60;
+
+    timerElement.innerText = 
+        String(hours).padStart(2, '0') + ":" + 
+        String(minutes).padStart(2, '0') + ":" + 
+        String(seconds).padStart(2, '0');
+
+    if (totalSeconds > 0) {
+        totalSeconds--;
+    }
+}
+
+setInterval(updateTimer, 1000);
+
+// প্রথমবার পেজ লোড হওয়ার সময় গ্রিড রেন্ডার করা
 renderGrid();
